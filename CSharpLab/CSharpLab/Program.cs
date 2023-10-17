@@ -2,4 +2,4 @@
 
 using CSharpLab;
 
-RangesTest.Run();
+PatternsTests.Run();
