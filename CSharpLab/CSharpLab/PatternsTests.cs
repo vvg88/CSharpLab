@@ -6,6 +6,8 @@ internal static class PatternsTests
 {
     public static void Run()
     {
+        PositionalPatternTest();
+        Console.WriteLine();
         PropertyPatternTest();
         Console.WriteLine();
         LogicalPatternTest();
@@ -13,6 +15,70 @@ internal static class PatternsTests
         TypePatternTest();
         Console.WriteLine();
         RelationalPatternTest();
+    }
+
+    private static void PositionalPatternTest()
+    {
+        ClassifyPoints();
+        Console.WriteLine();
+        ClassifyShapes();
+    }
+
+    private static void ClassifyShapes()
+    {
+        Console.WriteLine("Shapes classificator...");
+        var shapes = new List<Shape>
+        {
+            new Circle(new Point(1, 0), 4),
+            new Circle(new Point(0, 0), 1),
+            new Circle(new Point(3, 4), 2),
+            new Square(new Point(1, -2), 5),
+            new Square(new Point(1, 2), 3),
+        };
+        shapes.ForEach(s => Console.WriteLine(ClassifyShape(s)));
+
+        static string ClassifyShape(Shape shape) => $"[{shape}]: This is a " +
+            shape switch
+            {
+                Circle (_, > 3) => "Circle with the radius more than 3",
+                Circle ((0, 0), _) => "Circle with the center in the {0, 0}",
+                Circle ((> 0, > 0), _) c when (c.center.x > c.radius && c.center.y > c.radius) => "Circle completely in the first quadrant",
+                Square ((x: > 0, y: < 0), size: var sz) when sz * sz == 25 => "Square with area equal to 25",
+                _ => "Any other shape",
+            };
+    }
+
+    private static void ClassifyPoints()
+    {
+        Console.WriteLine("Points classificator...");
+        var points = new List<Point>
+        {
+            new Point(1, 2),
+            new Point(-1, 2),
+            new Point(-1, -2),
+            new Point(1, -2),
+            new Point(0, 2),
+            new Point(0, -2),
+            new Point(0, 0),
+            new Point(1, 0),
+            new Point(-5, 0),
+        };
+        points.ForEach(p => Console.WriteLine(ClassifyPoint(p)));
+
+        static string ClassifyPoint(Point p) => $"The point [{p}] is " +
+            p switch
+            {
+                ( > 0, > 0) => "in the first quadrant",
+                ( < 0, > 0) => "in the second quadrant",
+                ( < 0, < 0) => "in the third quadrant",
+                ( > 0, < 0) => "in the fourth quadrant",
+                (0, > 0) => "on positive Y axis",
+                (0, < 0) => "on negative Y axis",
+                ( > 0, 0) => "on positive X axis",
+                ( < 0, 0) => "on negative X axis",
+                (0, 0) => "in the center",
+                _ => throw new ArgumentException(),
+            };
     }
 
     private record Point(double x, double y);
